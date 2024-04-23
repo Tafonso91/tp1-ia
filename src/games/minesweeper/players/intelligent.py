@@ -7,57 +7,57 @@ from games.state import State
 class IntelligentMinesweeperPlayer(MinesweeperPlayer):
     def __init__(self, name):
         super().__init__(name)
-        self.corners_played = [False, False, False, False]  # Para rastrear se cada canto foi jogado
+        self.corners_played = [False, False, False, False]  
 
     def get_action(self, state: MinesweeperState):
-        # Primeiro, jogar nas quatro esquinas, se ainda não jogadas
+        # First play at the corners
         corners = [
-            MinesweeperAction(0, 0),  # Canto superior esquerdo
-            MinesweeperAction(0, state.get_num_cols() - 1),  # Canto superior direito
-            MinesweeperAction(state.get_num_rows() - 1, 0),  # Canto inferior esquerdo
-            MinesweeperAction(state.get_num_rows() - 1, state.get_num_cols() - 1),  # Canto inferior direito
+            MinesweeperAction(0, 0),  # Top left corner
+            MinesweeperAction(0, state.get_num_cols() - 1),  # Top right corner
+            MinesweeperAction(state.get_num_rows() - 1, 0),  # Lower left corner
+            MinesweeperAction(state.get_num_rows() - 1, state.get_num_cols() - 1),  # Lower right corner
         ]
 
-        # Jogue nos cantos, se ainda não o fez
+        # Play at the corners
         for i, corner in enumerate(corners):
             if not self.corners_played[i] and state.validate_action(corner):
                 self.corners_played[i] = True
                 return corner
         
-        # Criar uma lista para evitar ações
+        # Create a list to avoid some actions
         avoid_moves = set()
         
-        # Procurar por células com o número 0 e explorar suas adjacências
+        # Looking for number 0 and  fills adjacent cells
         for row in range(state.get_num_rows()):
             for col in range(state.get_num_cols()):
-                # Verificar a célula atual
+                # Check actual cell
                 cell_value = state.get_grid()[row][col]
                 
-                if cell_value == 0:  # Encontrou uma célula com valor 0
-                    # Explorar adjacências
+                if cell_value == 0:  # Found number 0 cell
+                    # Explores adjacent cells
                     for d_row in [-1, 0, 1]:
                         for d_col in [-1, 0, 1]:
                             adj_row = row + d_row
                             adj_col = col + d_col
-                            # Verificar se os índices estão dentro dos limites
+                            # Check if the indexes are within limits
                             if 0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols():
                                 move = MinesweeperAction(adj_row, adj_col)
                                 if state.validate_action(move):
                                     return move
                 
-                elif cell_value == 3:  # Encontrou uma célula com valor 3
-                    # Evitar adjacências a células com valor 3
+                elif cell_value == 3:  # Found a cell with value 3
+                    # Avoid adjacent cells
                     for d_row in [-1, 0, 1]:
                         for d_col in [-1, 0, 1]:
                             adj_row = row + d_row
                             adj_col = col + d_col
-                            # Verificar se os índices estão dentro dos limites
+                            # Check if the indexes are within limits
                             if 0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols():
                                 avoid_moves.add(MinesweeperAction(adj_row, adj_col))
                 
-                elif isinstance(cell_value, int) and cell_value > 0:  # Verificar células com números
+                elif isinstance(cell_value, int) and cell_value > 0:  # Verify cells with numbers
                     empty_cells_adjacent = []
-                    # Verificar células adjacentes
+                    # Verify adjacent cells
                     for d_row in [-1, 0, 1]:
                         for d_col in [-1, 0, 1]:
                             adj_row = row + d_row
@@ -66,7 +66,7 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
                                 adj_value = state.get_grid()[adj_row][adj_col]
                                 if adj_value == MinesweeperState.EMPTY_CELL:
                                     empty_cells_adjacent.append(MinesweeperAction(adj_row, adj_col))
-                    # Se o número de células vazias adjacentes for igual ao valor da célula atual
+                    # If the number of adjacent empty cells is equal to the value of the current cell
                     if len(empty_cells_adjacent) == cell_value:
                         avoid_moves.update(empty_cells_adjacent)
         
@@ -82,9 +82,9 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
         return choice(list(state.get_possible_actions()))
 
     def event_action(self, pos: int, action, new_state: State):
-        # Ignorar eventos de ação por enquanto
+    
         pass
 
     def event_end_game(self, final_state: State):
-        # Ignorar eventos de fim de jogo por enquanto
+        
         pass
