@@ -10,8 +10,7 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
         self.corners_played = [False, False, False, False]  # Para rastrear se cada canto foi jogado
 
     def get_action(self, state: MinesweeperState):
-        # Primeiro, jogar nas quatro esquinas
-        # Canto superior esquerdo
+        # Primeiro, jogar nas quatro esquinas, se ainda não jogadas
         corners = [
             MinesweeperAction(0, 0),  # Canto superior esquerdo
             MinesweeperAction(0, state.get_num_cols() - 1),  # Canto superior direito
@@ -19,13 +18,16 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
             MinesweeperAction(state.get_num_rows() - 1, state.get_num_cols() - 1),  # Canto inferior direito
         ]
 
-        for index, move in enumerate(corners):
-            if state.validate_action(move) and not self.corners_played[index]:
-                # Marcar este canto como jogado
-                self.corners_played[index] = True
-                return move
+        # Jogue nos cantos, se ainda não o fez
+        for i, corner in enumerate(corners):
+            if not self.corners_played[i] and state.validate_action(corner):
+                self.corners_played[i] = True
+                return corner
         
-        # Agora, procurar por células com o número 0 e explorar suas adjacências
+        # Criar uma lista para evitar ações
+        avoid_moves = set()
+        
+        # Procurar por células com o número 0 e explorar suas adjacências
         for row in range(state.get_num_rows()):
             for col in range(state.get_num_cols()):
                 # Verificar a célula atual
@@ -37,15 +39,47 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
                         for d_col in [-1, 0, 1]:
                             adj_row = row + d_row
                             adj_col = col + d_col
-                            # Certificar-se de que os índices estão dentro dos limites
+                            # Verificar se os índices estão dentro dos limites
                             if 0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols():
                                 move = MinesweeperAction(adj_row, adj_col)
                                 if state.validate_action(move):
                                     return move
-
-        # Se não houver uma jogada clara, faça uma escolha aleatória
+                
+                elif cell_value == 3:  # Encontrou uma célula com valor 3
+                    # Evitar adjacências a células com valor 3
+                    for d_row in [-1, 0, 1]:
+                        for d_col in [-1, 0, 1]:
+                            adj_row = row + d_row
+                            adj_col = col + d_col
+                            # Verificar se os índices estão dentro dos limites
+                            if 0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols():
+                                avoid_moves.add(MinesweeperAction(adj_row, adj_col))
+                
+                elif isinstance(cell_value, int) and cell_value > 0:  # Verificar células com números
+                    empty_cells_adjacent = []
+                    # Verificar células adjacentes
+                    for d_row in [-1, 0, 1]:
+                        for d_col in [-1, 0, 1]:
+                            adj_row = row + d_row
+                            adj_col = col + d_col
+                            if 0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols():
+                                adj_value = state.get_grid()[adj_row][adj_col]
+                                if adj_value == MinesweeperState.EMPTY_CELL:
+                                    empty_cells_adjacent.append(MinesweeperAction(adj_row, adj_col))
+                    # Se o número de células vazias adjacentes for igual ao valor da célula atual
+                    if len(empty_cells_adjacent) == cell_value:
+                        avoid_moves.update(empty_cells_adjacent)
+        
+        # Filtrar ações possíveis para evitar adjacências a células com o número 3 e células vazias adjacentes
         possible_actions = list(state.get_possible_actions())
-        return choice(possible_actions)
+        possible_actions = [action for action in possible_actions if action not in avoid_moves]
+        
+        # Se houver alguma ação possível após filtrar, escolha uma aleatória
+        if possible_actions:
+            return choice(possible_actions)
+        
+        # Se não houver uma jogada clara, faça uma escolha aleatória
+        return choice(list(state.get_possible_actions()))
 
     def event_action(self, pos: int, action, new_state: State):
         # Ignorar eventos de ação por enquanto
@@ -54,5 +88,3 @@ class IntelligentMinesweeperPlayer(MinesweeperPlayer):
     def event_end_game(self, final_state: State):
         # Ignorar eventos de fim de jogo por enquanto
         pass
-
-
