@@ -12,12 +12,12 @@ class BotConnect4Player(Connect4Player):
         self.depth = depth
 
     def get_action(self, state: Connect4State):
-        # Chama a função MiniMax para encontrar a melhor ação
+        # Call Minimax to find the best solution
         return self.minimax(state, self.depth, True)[1]
 
     def minimax(self, state: Connect4State, depth: int, is_maximizing: bool):
         if depth == 0 or state.is_finished():
-            # Retorna a avaliação do estado
+            # Return the state avaliation
             return self.evaluate(state), None
 
         possible_actions = state.get_possible_actions()
@@ -26,7 +26,7 @@ class BotConnect4Player(Connect4Player):
             max_eval = float('-inf')
             best_action = None
             for action in possible_actions:
-                # Clona o estado para simular a jogada
+                # Clone the state to simulate the play
                 new_state = state.clone()
                 new_state.update(action)
                 # Chama minimax recursivamente para alternar os jogadores
