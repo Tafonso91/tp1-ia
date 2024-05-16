@@ -126,21 +126,21 @@ class ProbMinesweeperPlayer(MinesweeperPlayer):
 
 
     def calculate_action_probability(self, action, possible_actions, state: MinesweeperState):
-        # Inicializar a probabilidade como igual para todas as ações
+        # Initialize probability as equal for all actions
         base_probability = 1 / len(possible_actions)
         
-        # Fatores para ajustar a probabilidade com base em certos critérios
-        empty_cell_bonus = 1.5  # Bônus para ações adjacente a células vazias
-        mine_penalty = 0.5  # Penalidade para ações adjacente a minas
-        revealed_cell_penalty = 0.2  # Penalidade para ações adjacente a células já reveladas
+        # Factors to adjust probability based on certain criteria
+        empty_cell_bonus = 1.5  # Bonus for actions adjacent to empty cells
+        mine_penalty = 0.5  # Penalty for actions adjacent to mines
+        revealed_cell_penalty = 0.2  # Penalty for actions adjacent to already revealed cells
         
-        # Obter as coordenadas da ação
+        # Get the coordinates of the action
         row, col = action.get_row(), action.get_col()
         
-        # Verificar células adjacentes
+        # Check adjacent cells
         adjacent_cells = [(row + dr, col + dc) for dr in [-1, 0, 1] for dc in [-1, 0, 1] if (dr != 0 or dc != 0)]
         
-        # Calcular a probabilidade com base nos fatores
+        # Calculate probability based on factors
         probability = base_probability
         for adj_row, adj_col in adjacent_cells:
           if (0 <= adj_row < state.get_num_rows() and 0 <= adj_col < state.get_num_cols() and
@@ -155,6 +155,7 @@ class ProbMinesweeperPlayer(MinesweeperPlayer):
                     probability *= revealed_cell_penalty
         
         return probability
+
 
 
     def event_action(self, pos: int, action, new_state: State):
