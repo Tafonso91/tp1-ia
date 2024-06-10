@@ -8,7 +8,7 @@ import random
 class ProbMinesweeperPlayer(MinesweeperPlayer):
     def __init__(self, name):
         super().__init__(name)
-        self.corners_played = [False, False, False, False]  # Para rastrear se cada canto foi jogado
+        self.corners_played = [False, False, False, False]  # Para verificar se cada canto foi jogado
 
     def get_action(self, state: MinesweeperState):
         # Primeiro, jogar nas quatro esquinas, se ainda não jogadas

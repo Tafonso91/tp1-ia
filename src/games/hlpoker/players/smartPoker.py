@@ -63,7 +63,7 @@ class SmartHLPokerPlayer(HLPokerPlayer):
 
         # Considera a força das cartas privadas e outras estratégias para CALL ou FOLD
         card_strength = max(private_cards[0].rank.value, private_cards[1].rank.value)
-        strength_threshold = 8  # Ajuste o valor conforme necessário
+        strength_threshold = 8  
 
         if card_strength > strength_threshold:
             # Se a força das cartas for alta, retorna CALL
