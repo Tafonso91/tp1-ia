@@ -5,7 +5,7 @@ from games.minesweeper.state import MinesweeperState
 from games.state import State
 import random
 
-class ProbMinesweeperPlayer(MinesweeperPlayer):
+class minesweeper_26544_28256_v1(MinesweeperPlayer):
     def __init__(self, name):
         super().__init__(name)
         self.corners_played = [False, False, False, False]  # To track if each corner has been played

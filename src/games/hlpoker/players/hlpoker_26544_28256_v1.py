@@ -4,7 +4,7 @@ from games.hlpoker.round import Round
 from games.hlpoker.state import HLPokerState
 from games.state import State
 
-class SmartHLPokerPlayer(HLPokerPlayer):
+class hlpoker_26544_28256_v1(HLPokerPlayer):
 
     def __init__(self, name):
         super().__init__(name)

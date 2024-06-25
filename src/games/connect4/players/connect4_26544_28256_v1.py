@@ -5,7 +5,7 @@ from games.connect4.state import Connect4State
 from games.state import State
 from games.connect4.result import Connect4Result
 
-class BotConnect4Player(Connect4Player):
+class connect4_26544_28256_v1(Connect4Player):
 
     def __init__(self, name, depth=4):
         super().__init__(name)
